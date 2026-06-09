@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<HBox spacing="20.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.DriverController">
+    <!-- Left Panel: Table of Drivers & Search -->
+    <children>
+        <VBox spacing="10.0" HBox.hgrow="ALWAYS" styleClass="form-container">
+            <children>
+                <HBox spacing="10.0" alignment="CENTER_LEFT">
+                    <children>
+                        <Label text="Search Driver:" style="-fx-font-weight: bold;"/>
+                        <TextField fx:id="searchField" promptText="Enter name or license..." HBox.hgrow="ALWAYS" onKeyReleased="#handleSearch"/>
+                    </children>
+                </HBox>
+                
+                <TableView fx:id="driverTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colId" prefWidth="60.0" text="ID" />
+                        <TableColumn fx:id="colLicense" prefWidth="130.0" text="License No" />
+                        <TableColumn fx:id="colName" prefWidth="180.0" text="Name" />
+                        <TableColumn fx:id="colEmail" prefWidth="180.0" text="Email" />
+                        <TableColumn fx:id="colPhone" prefWidth="130.0" text="Phone" />
+                    </columns>
+                </TableView>
+            </children>
+        </VBox>
+        
+        <!-- Right Panel: CRUD Operations Form -->
+        <VBox prefWidth="300.0" spacing="12.0" styleClass="form-container">
+            <children>
+                <Label text="Driver Profile Record" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                
+                <Label text="License Number *" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
+                <TextField fx:id="licenseField" promptText="e.g. DL10001"/>
+                
+                <Label text="Full Name *" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
+                <TextField fx:id="nameField" promptText="e.g. John Doe"/>
+                
+                <Label text="Email Address" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
+                <TextField fx:id="emailField" promptText="e.g. john@example.com"/>
+                
+                <Label text="Phone Number" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
+                <TextField fx:id="phoneField" promptText="e.g. 555-0101"/>
+                
+                <Label text="Residential Address" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
+                <TextArea fx:id="addressField" prefHeight="70.0" promptText="Street address..." wrapText="true"/>
+                
+                <Label text="* Mandatory fields" style="-fx-font-size: 11px; -fx-text-fill: #95a5a6;"/>
+                
+                <!-- Buttons Row -->
+                <HBox spacing="10.0" style="-fx-padding: 10 0 0 0;">
+                    <children>
+                        <Button fx:id="btnAdd" text="Add" onAction="#handleAddDriver" styleClass="btn-primary" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                        <Button fx:id="btnUpdate" text="Update" onAction="#handleUpdateDriver" styleClass="btn-secondary" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                    </children>
+                </HBox>
+                <HBox spacing="10.0">
+                    <children>
+                        <Button fx:id="btnDelete" text="Delete" onAction="#handleDeleteDriver" styleClass="btn-danger" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                        <Button fx:id="btnClear" text="Clear" onAction="#clearForm" styleClass="btn-secondary" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                    </children>
+                </HBox>
+                
+                <Label fx:id="statusLabel" text="Status" visible="false" wrapText="true" style="-fx-font-weight: bold; -fx-font-size: 12px;"/>
+            </children>
+        </VBox>
+    </children>
+</HBox>

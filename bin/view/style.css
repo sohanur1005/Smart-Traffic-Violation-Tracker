@@ -1,0 +1,194 @@
+.root {
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-background-color: #f4f6f9;
+}
+
+/* Sidebar navigation styling */
+.sidebar {
+    -fx-background-color: #0b1a30; /* Dark Navy Blue */
+    -fx-padding: 20 10 20 10;
+}
+
+.sidebar-title {
+    -fx-text-fill: #e8a87c; /* Gold/Amber Accent */
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 20 0;
+}
+
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #b8c7db;
+    -fx-font-size: 14px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 10 15 10 15;
+    -fx-cursor: hand;
+    -fx-background-radius: 4px;
+    -fx-max-width: Infinity;
+}
+
+.nav-button:hover {
+    -fx-background-color: #1a2f4c;
+    -fx-text-fill: white;
+}
+
+.nav-button-active {
+    -fx-background-color: #1e3a60;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-border-color: transparent transparent transparent #e8a87c;
+    -fx-border-width: 0 0 0 4px;
+}
+
+/* Stats Cards */
+.stats-card {
+    -fx-background-color: white;
+    -fx-background-radius: 6px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 4);
+    -fx-padding: 15;
+}
+
+.stats-card-title {
+    -fx-text-fill: #7f8c8d;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.stats-card-value {
+    -fx-text-fill: #2c3e50;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+/* Header bar */
+.header-bar {
+    -fx-background-color: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.03), 0, 0, 0, 2);
+    -fx-padding: 15 20 15 20;
+}
+
+.header-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+/* Form Styles */
+.form-container {
+    -fx-background-color: white;
+    -fx-background-radius: 6px;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 4);
+}
+
+.text-field, .combo-box, .text-area {
+    -fx-background-color: #f9f9fb;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 8;
+    -fx-font-size: 13px;
+}
+
+.text-field:focused, .combo-box:focused, .text-area:focused {
+    -fx-border-color: #3182ce;
+    -fx-background-color: white;
+}
+
+.btn-primary {
+    -fx-background-color: #3182ce;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 16 8 16;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+}
+
+.btn-primary:hover {
+    -fx-background-color: #2b6cb0;
+}
+
+.btn-danger {
+    -fx-background-color: #e53e3e;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 16 8 16;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+}
+
+.btn-danger:hover {
+    -fx-background-color: #c53030;
+}
+
+.btn-secondary {
+    -fx-background-color: #edf2f7;
+    -fx-text-fill: #4a5568;
+    -fx-font-weight: bold;
+    -fx-padding: 8 16 8 16;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: #e2e8f0;
+}
+
+/* Table styling */
+.table-view {
+    -fx-background-color: transparent;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1;
+    -fx-border-radius: 6px;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #edf2f7;
+    -fx-background-radius: 6px 6px 0 0;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-text-fill: #4a5568;
+    -fx-font-weight: bold;
+    -fx-size: 38px;
+}
+
+.table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: transparent transparent #edf2f7 transparent;
+}
+
+.table-row-cell:filled:hover {
+    -fx-background-color: #f7fafc;
+}
+
+.table-row-cell:filled:selected {
+    -fx-background-color: #ebf8ff;
+    -fx-text-background-color: #2b6cb0;
+}
+
+/* Alerts and Status Warning Badges */
+.status-good {
+    -fx-background-color: #c6f6d5;
+    -fx-text-fill: #22543d;
+    -fx-font-weight: bold;
+    -fx-padding: 4 8;
+    -fx-background-radius: 4px;
+}
+
+.status-warning {
+    -fx-background-color: #feebc8;
+    -fx-text-fill: #744210;
+    -fx-font-weight: bold;
+    -fx-padding: 4 8;
+    -fx-background-radius: 4px;
+}
+
+.status-critical {
+    -fx-background-color: #fed7d7;
+    -fx-text-fill: #742a2a;
+    -fx-font-weight: bold;
+    -fx-padding: 4 8;
+    -fx-background-radius: 4px;
+}
