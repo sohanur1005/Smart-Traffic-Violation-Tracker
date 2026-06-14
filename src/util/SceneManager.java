@@ -5,7 +5,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.io.IOException;
 
 public class SceneManager {
     private static Stage stage;
@@ -18,9 +17,13 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(SceneManager.class.getResource(fxmlPath));
             Scene scene = new Scene(root);
+            // Temporarily allow resizing so the stage can adapt to the new scene size
+            stage.setResizable(true);
             stage.setScene(scene);
+            stage.sizeToScene();
+            stage.setResizable(false);
             stage.centerOnScreen();
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println("Failed to load scene: " + fxmlPath);
             e.printStackTrace();
         }
@@ -29,7 +32,7 @@ public class SceneManager {
     public static Parent loadFXML(String fxmlPath) {
         try {
             return FXMLLoader.load(SceneManager.class.getResource(fxmlPath));
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println("Failed to load component: " + fxmlPath);
             e.printStackTrace();
             return null;

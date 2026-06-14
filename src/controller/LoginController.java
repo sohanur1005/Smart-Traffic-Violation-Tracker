@@ -43,4 +43,9 @@ public class LoginController {
             errorLabel.setVisible(true);
         }
     }
+
+    @FXML
+    public void goToRegister(ActionEvent event) {
+        SceneManager.switchToScene("/view/register.fxml");
+    }
 }

@@ -82,7 +82,7 @@
                                         <VBox styleClass="stats-card" HBox.hgrow="ALWAYS" prefWidth="200.0">
                                             <children>
                                                 <Label text="TOTAL UNPAID FINES" styleClass="stats-card-title"/>
-                                                <Label fx:id="statFinesUnpaid" text="$0.00" styleClass="stats-card-value" style="-fx-text-fill: #e53e3e;"/>
+                                                <Label fx:id="statFinesUnpaid" text="\$0.00" styleClass="stats-card-value" style="-fx-text-fill: #e53e3e;"/>
                                             </children>
                                         </VBox>
                                     </children>

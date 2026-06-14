@@ -2,18 +2,21 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
 
-<VBox alignment="CENTER" spacing="20.0" prefHeight="400.0" prefWidth="600.0" 
+<VBox alignment="CENTER" spacing="20.0" prefHeight="450.0" prefWidth="600.0" 
       style="-fx-background-color: #0b1a30;" 
       stylesheets="@style.css" 
       xmlns="http://javafx.com/javafx/21" 
       xmlns:fx="http://javafx.com/fxml/1" 
-      fx:controller="controller.LoginController">
+      fx:controller="controller.RegisterController">
     <padding>
         <Insets bottom="30.0" left="50.0" right="50.0" top="30.0"/>
     </padding>
@@ -22,7 +25,7 @@
     <Label text="Law Enforcement Administration Panel" style="-fx-text-fill: #b8c7db; -fx-font-size: 14px;"/>
 
     <VBox spacing="10.0" maxWidth="320.0" style="-fx-background-color: white; -fx-padding: 25; -fx-background-radius: 8px;">
-        <Label text="Sign In" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+        <Label text="Register Account" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
         
         <Label text="Username" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
         <TextField fx:id="usernameField" promptText="Enter username"/>
@@ -30,10 +33,20 @@
         <Label text="Password" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
         <PasswordField fx:id="passwordField" promptText="Enter password"/>
         
-        <Button fx:id="loginButton" text="Login" onAction="#handleLogin" styleClass="btn-primary" maxWidth="Infinity" style="-fx-margin-top: 10;"/>
+        <Label text="Role" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
+        <ComboBox fx:id="roleComboBox" promptText="Select role" maxWidth="Infinity">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="user"/>
+                    <String fx:value="admin"/>
+                </FXCollections>
+            </items>
+        </ComboBox>
         
-        <Hyperlink text="Don't have an account? Register here" onAction="#goToRegister" style="-fx-text-fill: #3182ce; -fx-font-size: 12px; -fx-alignment: center; -fx-padding: 5 0 0 0;"/>
+        <Button fx:id="registerButton" text="Register" onAction="#handleRegister" styleClass="btn-primary" maxWidth="Infinity" style="-fx-margin-top: 10;"/>
         
-        <Label fx:id="errorLabel" style="-fx-text-fill: #e53e3e; -fx-font-size: 12px;" visible="false" wrapText="true"/>
+        <Hyperlink text="Already have an account? Login here" onAction="#goToLogin" style="-fx-text-fill: #3182ce; -fx-font-size: 12px; -fx-alignment: center; -fx-padding: 5 0 0 0;"/>
+        
+        <Label fx:id="messageLabel" style="-fx-text-fill: #e53e3e; -fx-font-size: 12px;" visible="false" wrapText="true"/>
     </VBox>
 </VBox>
