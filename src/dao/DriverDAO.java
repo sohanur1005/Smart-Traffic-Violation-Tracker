@@ -78,6 +78,32 @@ public class DriverDAO {
         return null;
     }
 
+    /** Look up the driver linked to a specific user account via users.driver_id FK. */
+    public Driver getDriverByUserId(int userId) {
+        String sql = "SELECT d.* FROM drivers d "
+                + "JOIN users u ON u.driver_id = d.id "
+                + "WHERE u.id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Driver(
+                        rs.getInt("id"),
+                        rs.getString("license_number"),
+                        rs.getString("name"),
+                        rs.getString("email"),
+                        rs.getString("phone"),
+                        rs.getString("address")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting driver by user ID: " + e.getMessage());
+        }
+        return null;
+    }
+
     public boolean updateDriver(Driver driver) {
         String sql = "UPDATE drivers SET license_number = ?, name = ?, email = ?, phone = ?, address = ? WHERE id = ?";
         try (Connection conn = DBConnection.getConnection();

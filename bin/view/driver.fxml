@@ -69,6 +69,15 @@
                         <Button fx:id="btnClear" text="Clear" onAction="#clearForm" styleClass="btn-secondary" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
                     </children>
                 </HBox>
+
+                <!-- Link User Account to this Driver -->
+                <HBox spacing="10.0" style="-fx-padding: 6 0 0 0;">
+                    <children>
+                        <Button fx:id="btnLinkUser" text="🔗  Link User Account" onAction="#handleLinkUserAccount"
+                                style="-fx-background-color: #805ad5; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 12; -fx-background-radius: 4px; -fx-cursor: hand;"
+                                HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                    </children>
+                </HBox>
                 
                 <Label fx:id="statusLabel" text="Status" visible="false" wrapText="true" style="-fx-font-weight: bold; -fx-font-size: 12px;"/>
             </children>

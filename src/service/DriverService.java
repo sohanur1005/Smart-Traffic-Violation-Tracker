@@ -25,6 +25,10 @@ public class DriverService {
         return driverDAO.getDriverByLicense(licenseNumber);
     }
 
+    public Driver getDriverByUserId(int userId) {
+        return driverDAO.getDriverByUserId(userId);
+    }
+
     public Driver getDriverById(int id) {
         return driverDAO.getDriverById(id);
     }

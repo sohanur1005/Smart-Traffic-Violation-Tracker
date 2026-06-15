@@ -8,6 +8,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
@@ -17,6 +18,26 @@
         <VBox spacing="10.0" HBox.hgrow="ALWAYS" styleClass="form-container">
             <children>
                 <Label text="Issued Traffic Citations Log" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                
+                <!-- Search & Filter Bar -->
+                <HBox spacing="10.0" alignment="CENTER_LEFT" style="-fx-padding: 5 0 10 0;">
+                    <children>
+                        <Label text="Search License:" style="-fx-font-size: 12px; -fx-font-weight: bold;"/>
+                        <TextField fx:id="searchLicenseField" promptText="DL10001..." prefWidth="110.0"/>
+                        
+                        <Label text="Type:" style="-fx-font-size: 12px; -fx-font-weight: bold;"/>
+                        <ComboBox fx:id="filterViolationComboBox" promptText="All Types" prefWidth="110.0"/>
+                        
+                        <Label text="From:" style="-fx-font-size: 12px; -fx-font-weight: bold;"/>
+                        <DatePicker fx:id="startDatePicker" prefWidth="115.0"/>
+                        
+                        <Label text="To:" style="-fx-font-size: 12px; -fx-font-weight: bold;"/>
+                        <DatePicker fx:id="endDatePicker" prefWidth="115.0"/>
+                        
+                        <Button text="Reset" onAction="#handleResetFilters" styleClass="btn-secondary"/>
+                    </children>
+                </HBox>
+                
                 <TableView fx:id="recordTable" VBox.vgrow="ALWAYS">
                     <columns>
                         <TableColumn fx:id="colId" prefWidth="60.0" text="ID" />
@@ -34,52 +55,109 @@
         <!-- Right Panel: Form and Repeat Offender Warnings -->
         <VBox prefWidth="350.0" spacing="12.0" styleClass="form-container">
             <children>
-                <Label text="Issue Traffic Citation" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
-                
-                <!-- Driver Selector -->
-                <Label text="Select Driver *" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
-                <ComboBox fx:id="driverComboBox" onAction="#handleDriverSelected" promptText="Select driver" maxWidth="Infinity"/>
-                
-                <!-- Smart Offender Warning Badge -->
-                <Label fx:id="offenderBadge" text="[STATUS: SELECT DRIVER]" styleClass="status-good" alignment="CENTER" maxWidth="Infinity" style="-fx-font-size: 11px;"/>
-                
-                <!-- Vehicle Selector -->
-                <Label text="Select Vehicle *" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
-                <ComboBox fx:id="vehicleComboBox" promptText="Select driver's vehicle" maxWidth="Infinity"/>
-                
-                <!-- Violation Selector -->
-                <Label text="Select Violation Type *" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
-                <ComboBox fx:id="violationComboBox" onAction="#handleViolationSelected" promptText="Select violation code" maxWidth="Infinity"/>
-                
-                <!-- Dynamic Fine Display -->
-                <VBox spacing="3.0" style="-fx-background-color: #f7fafc; -fx-padding: 10; -fx-background-radius: 4px; -fx-border-color: #e2e8f0; -fx-border-width: 1;">
+                <!-- Issue Citation Form Container -->
+                <VBox fx:id="issueCitationFormContainer" spacing="12.0">
                     <children>
-                        <HBox alignment="CENTER_LEFT">
+                        <Label text="Issue Traffic Citation" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                        
+                        <!-- Driver Selector -->
+                        <Label text="Select Driver *" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
+                        <ComboBox fx:id="driverCombo" onAction="#handleDriverSelected" promptText="Select driver" maxWidth="Infinity"/>
+                        
+                        <!-- Smart Offender Warning Badge -->
+                        <Label fx:id="offenderBadge" text="[STATUS: SELECT DRIVER]" styleClass="status-good" alignment="CENTER" maxWidth="Infinity" style="-fx-font-size: 11px;"/>
+                        
+                        <!-- Vehicle Selector -->
+                        <Label text="Select Vehicle *" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
+                        <ComboBox fx:id="vehicleCombo" promptText="Select driver's vehicle" maxWidth="Infinity"/>
+                        
+                        <!-- Violation Selector -->
+                        <Label text="Select Violation Type *" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
+                        <ComboBox fx:id="violationCombo" onAction="#handleViolationSelected" promptText="Select violation code" maxWidth="Infinity"/>
+                        
+                        <!-- Dynamic Fine Display -->
+                        <VBox spacing="3.0" style="-fx-background-color: #f7fafc; -fx-padding: 10; -fx-background-radius: 4px; -fx-border-color: #e2e8f0; -fx-border-width: 1;">
                             <children>
-                                <Label text="Levied Fine: " style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
-                                <Label fx:id="fineValueLabel" text="$0.00" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                                <HBox alignment="CENTER_LEFT">
+                                    <children>
+                                        <Label text="Levied Fine: " style="-fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                                        <Label fx:id="fineLabel" text="\$0.00" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                                    </children>
+                                </HBox>
+                                <Label fx:id="fineSurchargeNote" text="Base fine amount" style="-fx-font-size: 10px; -fx-text-fill: #718096;"/>
                             </children>
-                        </HBox>
-                        <Label fx:id="fineSurchargeNote" text="Base fine amount" style="-fx-font-size: 10px; -fx-text-fill: #718096;"/>
+                        </VBox>
+                        
+                        <!-- Notes -->
+                        <Label text="Incident/Officer Notes" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
+                        <TextArea fx:id="notesField" prefHeight="60.0" promptText="Describe incident location, speed, etc..." wrapText="true"/>
+                        
+                        <Label text="* Mandatory fields" style="-fx-font-size: 11px; -fx-text-fill: #95a5a6;"/>
+                        
+                        <!-- Actions -->
+                        <VBox spacing="8.0" style="-fx-padding: 10 0 0 0;">
+                            <children>
+                                <Button fx:id="issueFineButton" text="Submit Ticket" onAction="#handleSubmitTicket" styleClass="btn-primary" maxWidth="Infinity"/>
+                                <HBox spacing="10.0">
+                                    <children>
+                                        <Button fx:id="btnCollect" text="Collect Fine (Mark Paid)" onAction="#handleCollectFine" styleClass="btn-secondary" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                                        <Button fx:id="btnClear" text="Clear Form" onAction="#clearForm" styleClass="btn-secondary" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
                     </children>
                 </VBox>
-                
-                <!-- Notes -->
-                <Label text="Incident/Officer Notes" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
-                <TextArea fx:id="notesField" prefHeight="60.0" promptText="Describe incident location, speed, etc..." wrapText="true"/>
-                
-                <Label text="* Mandatory fields" style="-fx-font-size: 11px; -fx-text-fill: #95a5a6;"/>
-                
-                <!-- Actions -->
-                <VBox spacing="8.0" style="-fx-padding: 10 0 0 0;">
+
+                <!-- Review Payment Form Container -->
+                <VBox fx:id="reviewPaymentFormContainer" spacing="12.0" visible="false" managed="false">
                     <children>
-                        <Button fx:id="btnSubmit" text="Submit Ticket" onAction="#handleSubmitTicket" styleClass="btn-primary" maxWidth="Infinity"/>
-                        <HBox spacing="10.0">
+                        <Label text="Review Payment Transaction" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                        
+                        <VBox spacing="8.0" style="-fx-background-color: #f7fafc; -fx-padding: 15; -fx-background-radius: 6px; -fx-border-color: #cbd5e0; -fx-border-width: 1;">
                             <children>
-                                <Button fx:id="btnCollect" text="Collect Fine (Mark Paid)" onAction="#handleCollectFine" styleClass="btn-secondary" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
-                                <Button fx:id="btnClear" text="Clear Form" onAction="#clearForm" styleClass="btn-secondary" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                                <HBox spacing="10">
+                                    <children>
+                                        <Label text="Ticket ID:" style="-fx-font-weight: bold; -fx-text-fill: #4a5568;"/>
+                                        <Label fx:id="reviewTicketId" text="#0" style="-fx-font-weight: bold;"/>
+                                    </children>
+                                </HBox>
+                                <HBox spacing="10">
+                                    <children>
+                                        <Label text="Driver:" style="-fx-font-weight: bold; -fx-text-fill: #4a5568;"/>
+                                        <Label fx:id="reviewDriverName" text="John Doe"/>
+                                    </children>
+                                </HBox>
+                                <HBox spacing="10">
+                                    <children>
+                                        <Label text="Plate No:" style="-fx-font-weight: bold; -fx-text-fill: #4a5568;"/>
+                                        <Label fx:id="reviewPlateNumber" text="ABC-123"/>
+                                    </children>
+                                </HBox>
+                                <HBox spacing="10">
+                                    <children>
+                                        <Label text="Fine Amount:" style="-fx-font-weight: bold; -fx-text-fill: #4a5568;"/>
+                                        <Label fx:id="reviewFineAmount" text="\$0.00" style="-fx-text-fill: #e53e3e; -fx-font-weight: bold;"/>
+                                    </children>
+                                </HBox>
+                                <VBox spacing="3.0">
+                                    <children>
+                                        <Label text="Incident Notes:" style="-fx-font-weight: bold; -fx-text-fill: #4a5568;"/>
+                                        <Label fx:id="reviewIncidentNotes" text="Notes..." wrapText="true" style="-fx-text-fill: #718096;"/>
+                                    </children>
+                                </VBox>
                             </children>
-                        </HBox>
+                        </VBox>
+                        
+                        <Label text="⏳ Payment Status: PENDING — Awaiting Admin Review" style="-fx-font-size: 12px; -fx-text-fill: #dd6b20; -fx-font-weight: bold;"/>
+                        
+                        <VBox spacing="8.0" style="-fx-padding: 10 0 0 0;">
+                            <children>
+                                <Button fx:id="btnApprovePayment" text="✅ Approve Payment" onAction="#handleApprovePayment" styleClass="btn-primary" style="-fx-background-color: #38a169;" maxWidth="Infinity"/>
+                                <Button fx:id="btnRejectPayment" text="❌ Reject Payment" onAction="#handleRejectPayment" styleClass="btn-danger" maxWidth="Infinity"/>
+                                <Button text="Back to Issue Citation" onAction="#handleCancelReview" styleClass="btn-secondary" maxWidth="Infinity"/>
+                            </children>
+                        </VBox>
                     </children>
                 </VBox>
                 

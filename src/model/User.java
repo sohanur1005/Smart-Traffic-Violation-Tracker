@@ -6,6 +6,7 @@ public class User {
     private String password;
     private String role;
     private String fullName;
+    private Integer driverId;
 
     public User() {}
 
@@ -15,6 +16,15 @@ public class User {
         this.password = password;
         this.role = role;
         this.fullName = fullName;
+    }
+
+    public User(int id, String username, String password, String role, String fullName, Integer driverId) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.role = role;
+        this.fullName = fullName;
+        this.driverId = driverId;
     }
 
     public int getId() { return id; }
@@ -32,8 +42,11 @@ public class User {
     public String getFullName() { return fullName; }
     public void setFullName(String fullName) { this.fullName = fullName; }
 
+    public Integer getDriverId() { return driverId; }
+    public void setDriverId(Integer driverId) { this.driverId = driverId; }
+
     @Override
     public String toString() {
-        return "User{id=" + id + ", username='" + username + "', role='" + role + "', fullName='" + fullName + "'}";
+        return "User{id=" + id + ", username='" + username + "', role='" + role + "', fullName='" + fullName + "', driverId=" + driverId + "}";
     }
 }

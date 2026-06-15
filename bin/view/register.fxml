@@ -11,7 +11,7 @@
 <?import javafx.collections.FXCollections?>
 <?import java.lang.String?>
 
-<VBox alignment="CENTER" spacing="20.0" prefHeight="450.0" prefWidth="600.0" 
+<VBox alignment="CENTER" spacing="20.0" prefHeight="520.0" prefWidth="600.0" 
       style="-fx-background-color: #0b1a30;" 
       stylesheets="@style.css" 
       xmlns="http://javafx.com/javafx/21" 
@@ -27,6 +27,9 @@
     <VBox spacing="10.0" maxWidth="320.0" style="-fx-background-color: white; -fx-padding: 25; -fx-background-radius: 8px;">
         <Label text="Register Account" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
         
+        <Label text="Full Name" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
+        <TextField fx:id="fullNameField" promptText="Enter your full name"/>
+        
         <Label text="Username" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
         <TextField fx:id="usernameField" promptText="Enter username"/>
         
@@ -37,11 +40,15 @@
         <ComboBox fx:id="roleComboBox" promptText="Select role" maxWidth="Infinity">
             <items>
                 <FXCollections fx:factory="observableArrayList">
-                    <String fx:value="user"/>
-                    <String fx:value="admin"/>
+                    <String fx:value="USER"/>
+                    <String fx:value="OFFICER"/>
+                    <String fx:value="ADMIN"/>
                 </FXCollections>
             </items>
         </ComboBox>
+
+        <Label fx:id="licenseLabel" text="Select Driver" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;" visible="false" managed="false"/>
+        <ComboBox fx:id="driverComboBox" promptText="Select Driver" maxWidth="Infinity" visible="false" managed="false"/>
         
         <Button fx:id="registerButton" text="Register" onAction="#handleRegister" styleClass="btn-primary" maxWidth="Infinity" style="-fx-margin-top: 10;"/>
         

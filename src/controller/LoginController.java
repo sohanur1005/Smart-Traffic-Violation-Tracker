@@ -35,6 +35,7 @@ public class LoginController {
 
         User user = authService.login(username, password);
         if (user != null) {
+            util.Session.currentUser = user;
             Main.setCurrentUser(user);
             // Switch to Dashboard
             SceneManager.switchToScene("/view/dashboard.fxml");

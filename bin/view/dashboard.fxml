@@ -5,110 +5,490 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="700.0" prefWidth="1050.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.DashboardController">
-    <!-- Sidebar Left -->
+<BorderPane prefHeight="700.0" prefWidth="1100.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.DashboardController">
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- SIDEBAR                                                             -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
     <left>
-        <VBox prefWidth="240.0" styleClass="sidebar" spacing="15.0" BorderPane.alignment="CENTER">
+        <VBox prefWidth="240.0" styleClass="sidebar" spacing="10.0" BorderPane.alignment="CENTER">
             <children>
+                <!-- Branding + User Info -->
                 <VBox spacing="5.0" alignment="CENTER_LEFT" style="-fx-border-color: transparent transparent #1e3a60 transparent; -fx-border-width: 0 0 1 0; -fx-padding: 0 0 15 10;">
                     <Label text="TRAFFIC TRACKER" styleClass="sidebar-title"/>
                     <Label fx:id="userNameLabel" text="Officer: Name" style="-fx-text-fill: #b8c7db; -fx-font-size: 13px; -fx-font-weight: bold;"/>
                     <Label fx:id="userRoleLabel" text="Role: OFFICER" style="-fx-text-fill: #7f8c8d; -fx-font-size: 11px;"/>
+                    <Label fx:id="roleBadge" text="OFFICER" style="-fx-background-color: #3182ce; -fx-text-fill: white; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 3 10; -fx-background-radius: 12;"/>
                 </VBox>
-                
-                <VBox spacing="10.0" VBox.vgrow="ALWAYS">
+
+                <!-- Navigation Menu -->
+                <VBox spacing="4.0" VBox.vgrow="ALWAYS">
                     <children>
-                        <Button fx:id="btnHome" text="Dashboard Home" onAction="#showHomeView" styleClass="nav-button" prefWidth="220.0" />
-                        <Button fx:id="btnDrivers" text="Manage Drivers" onAction="#showDriversView" styleClass="nav-button" prefWidth="220.0"/>
-                        <Button fx:id="btnVehicles" text="Manage Vehicles" onAction="#showVehiclesView" styleClass="nav-button" prefWidth="220.0"/>
-                        <Button fx:id="btnViolations" text="Manage Violations" onAction="#showViolationsView" styleClass="nav-button" prefWidth="220.0"/>
-                        <Button fx:id="btnRecords" text="Issue Traffic Ticket" onAction="#showRecordsView" styleClass="nav-button" prefWidth="220.0"/>
+                        <!-- Always visible -->
+                        <Button fx:id="btnHome" text="🏠  Dashboard Home" onAction="#showHomeView" styleClass="nav-button" prefWidth="220.0"/>
+
+                        <!-- ─── ADMIN / OFFICER only ─── -->
+                        <Button fx:id="btnDrivers"     text="👤  Manage Drivers"     onAction="#showDriversView"     styleClass="nav-button" prefWidth="220.0"/>
+                        <Button fx:id="btnVehicles"    text="🚗  Manage Vehicles"    onAction="#showVehiclesView"    styleClass="nav-button" prefWidth="220.0"/>
+                        <Button fx:id="btnViolations"  text="⚠   Manage Violations"  onAction="#showViolationsView"  styleClass="nav-button" prefWidth="220.0"/>
+                        <Button fx:id="btnRecords"     text="📝  Issue Traffic Ticket" onAction="#showRecordsView"   styleClass="nav-button" prefWidth="220.0"/>
+
+                        <!-- ─── USER (DRIVER) only ─── -->
+                        <Button fx:id="btnMyVehicles"  text="🚗  My Vehicles"        onAction="#showMyVehiclesView"  styleClass="nav-button" prefWidth="220.0" visible="false" managed="false"/>
+                        <Button fx:id="btnMyCitations" text="📋  My Citations"       onAction="#showMyCitationsView" styleClass="nav-button" prefWidth="220.0" visible="false" managed="false"/>
+                        <Button fx:id="btnMyProfile"   text="👤  My Profile"         onAction="#showMyProfileView"   styleClass="nav-button" prefWidth="220.0" visible="false" managed="false"/>
                     </children>
                 </VBox>
-                
+
                 <Button text="Sign Out" onAction="#handleLogout" styleClass="btn-danger" prefWidth="220.0"/>
             </children>
         </VBox>
     </left>
-    
-    <!-- Central Content Area -->
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- CENTRAL CONTENT                                                     -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
     <center>
         <VBox style="-fx-background-color: #f4f6f9;" BorderPane.alignment="CENTER">
-            <!-- Header Top Bar -->
+            <!-- Header Bar -->
             <children>
                 <HBox styleClass="header-bar" alignment="CENTER_LEFT">
                     <children>
                         <Label fx:id="headerTitle" text="Dashboard Home" styleClass="header-title"/>
                     </children>
                 </HBox>
-                
-                <!-- Dynamic Section Container -->
-                <StackPane fx:id="contentArea" VBox.vgrow="ALWAYS" style="-fx-padding: 20;">
-                    <!-- Default Dashboard Home view components -->
-                    <children>
-                        <VBox fx:id="homeViewPane" spacing="20.0">
-                            <children>
-                                <!-- Stats Row -->
-                                <HBox spacing="20.0" alignment="CENTER">
-                                    <children>
-                                        <!-- Card 1 -->
-                                        <VBox styleClass="stats-card" HBox.hgrow="ALWAYS" prefWidth="200.0">
-                                            <children>
-                                                <Label text="TOTAL DRIVERS" styleClass="stats-card-title"/>
-                                                <Label fx:id="statDriversCount" text="0" styleClass="stats-card-value"/>
-                                            </children>
-                                        </VBox>
-                                        <!-- Card 2 -->
-                                        <VBox styleClass="stats-card" HBox.hgrow="ALWAYS" prefWidth="200.0">
-                                            <children>
-                                                <Label text="TOTAL VEHICLES" styleClass="stats-card-title"/>
-                                                <Label fx:id="statVehiclesCount" text="0" styleClass="stats-card-value"/>
-                                            </children>
-                                        </VBox>
-                                        <!-- Card 3 -->
-                                        <VBox styleClass="stats-card" HBox.hgrow="ALWAYS" prefWidth="200.0">
-                                            <children>
-                                                <Label text="TOTAL TICKETS" styleClass="stats-card-title"/>
-                                                <Label fx:id="statTicketsCount" text="0" styleClass="stats-card-value"/>
-                                            </children>
-                                        </VBox>
-                                        <!-- Card 4 -->
-                                        <VBox styleClass="stats-card" HBox.hgrow="ALWAYS" prefWidth="200.0">
-                                            <children>
-                                                <Label text="TOTAL UNPAID FINES" styleClass="stats-card-title"/>
-                                                <Label fx:id="statFinesUnpaid" text="\$0.00" styleClass="stats-card-value" style="-fx-text-fill: #e53e3e;"/>
-                                            </children>
-                                        </VBox>
-                                    </children>
-                                </HBox>
-                                
-                                <!-- Recent Violations Table Section -->
-                                <VBox spacing="10.0" VBox.vgrow="ALWAYS" styleClass="form-container">
-                                    <children>
-                                        <Label text="Recent Violations Log" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
-                                        <TableView fx:id="recentViolationsTable" VBox.vgrow="ALWAYS">
-                                            <columns>
-                                                <TableColumn fx:id="colId" prefWidth="80.0" text="Ticket ID" />
-                                                <TableColumn fx:id="colDriver" prefWidth="180.0" text="Driver" />
-                                                <TableColumn fx:id="colPlate" prefWidth="120.0" text="Plate Number" />
-                                                <TableColumn fx:id="colCode" prefWidth="120.0" text="Violation Code" />
-                                                <TableColumn fx:id="colFine" prefWidth="100.0" text="Fine Levied" />
-                                                <TableColumn fx:id="colDate" prefWidth="140.0" text="Date" />
-                                                <TableColumn fx:id="colStatus" prefWidth="100.0" text="Status" />
-                                            </columns>
-                                        </TableView>
-                                    </children>
-                                </VBox>
-                            </children>
-                        </VBox>
-                    </children>
-                </StackPane>
+
+                <!-- Scrollable Dynamic Section Container -->
+                <ScrollPane fitToWidth="true" fitToHeight="true" VBox.vgrow="ALWAYS"
+                            style="-fx-background-color: transparent; -fx-background: transparent;">
+                    <StackPane fx:id="contentArea" style="-fx-padding: 20;">
+                        <children>
+
+                            <!-- ════════════════════════════════════════════════════ -->
+                            <!--  VIEW 1: DASHBOARD HOME (default)                   -->
+                            <!-- ════════════════════════════════════════════════════ -->
+                            <VBox fx:id="homeViewPane" spacing="20.0">
+                                <children>
+
+                                    <!-- USER: Notification Center -->
+                                    <VBox fx:id="notificationContainer" spacing="10" visible="false" managed="false" styleClass="form-container">
+                                        <children>
+                                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                                <children>
+                                                    <Label text="🔔 Notification Center" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2b6cb0;"/>
+                                                    <Label fx:id="notificationBadgeCount" text="0 New" style="-fx-background-color: #e53e3e; -fx-text-fill: white; -fx-font-size: 11px; -fx-padding: 2 6; -fx-background-radius: 10; -fx-font-weight: bold;"/>
+                                                    <HBox HBox.hgrow="ALWAYS"/>
+                                                    <Button fx:id="btnMarkAllRead" text="Mark All Read" onAction="#handleMarkAllRead" styleClass="btn-secondary" style="-fx-padding: 4 8; -fx-font-size: 11px;"/>
+                                                </children>
+                                            </HBox>
+                                            <VBox fx:id="notificationList" spacing="5.0"/>
+                                        </children>
+                                    </VBox>
+
+                                    <!-- ADMIN: Pending Payments Review Panel -->
+                                    <VBox fx:id="pendingPaymentsContainer" spacing="10" visible="false" managed="false" styleClass="form-container">
+                                        <children>
+                                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                                <children>
+                                                    <Label text="💳 Pending Payment Approvals" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #c05621;"/>
+                                                    <Label fx:id="pendingPaymentsBadge" text="0 Awaiting" style="-fx-background-color: #dd6b20; -fx-text-fill: white; -fx-font-size: 11px; -fx-padding: 2 6; -fx-background-radius: 10; -fx-font-weight: bold;"/>
+                                                    <HBox HBox.hgrow="ALWAYS"/>
+                                                    <Label text="Select a row then Approve or Reject" style="-fx-font-size: 11px; -fx-text-fill: #718096; -fx-font-style: italic;"/>
+                                                </children>
+                                            </HBox>
+                                            <TableView fx:id="pendingPaymentsTable" prefHeight="200.0">
+                                                <columns>
+                                                    <TableColumn fx:id="colPendingId"     prefWidth="70.0"  text="Ticket ID"/>
+                                                    <TableColumn fx:id="colPendingDriver" prefWidth="180.0" text="Driver"/>
+                                                    <TableColumn fx:id="colPendingPlate"  prefWidth="120.0" text="Plate No"/>
+                                                    <TableColumn fx:id="colPendingFine"   prefWidth="100.0" text="Fine ($)"/>
+                                                    <TableColumn fx:id="colPendingDate"   prefWidth="140.0" text="Submitted Date"/>
+                                                </columns>
+                                            </TableView>
+                                            <HBox spacing="10" alignment="CENTER_RIGHT">
+                                                <children>
+                                                    <Button text="✅  Approve Payment" onAction="#handleApprovePending"
+                                                            style="-fx-background-color: #38a169; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 18; -fx-background-radius: 4px; -fx-cursor: hand;"/>
+                                                    <Button text="❌  Reject Payment" onAction="#handleRejectPending" styleClass="btn-danger"/>
+                                                </children>
+                                            </HBox>
+                                        </children>
+                                    </VBox>
+
+                                    <!-- Stats Cards Row -->
+                                    <HBox spacing="20.0" alignment="CENTER">
+                                        <children>
+                                            <VBox styleClass="stats-card" HBox.hgrow="ALWAYS" prefWidth="200.0">
+                                                <children>
+                                                    <Label fx:id="statCard1Title" text="TOTAL DRIVERS" styleClass="stats-card-title"/>
+                                                    <Label fx:id="statDriversCount" text="0" styleClass="stats-card-value"/>
+                                                </children>
+                                            </VBox>
+                                            <VBox styleClass="stats-card" HBox.hgrow="ALWAYS" prefWidth="200.0">
+                                                <children>
+                                                    <Label fx:id="statCard2Title" text="TOTAL VEHICLES" styleClass="stats-card-title"/>
+                                                    <Label fx:id="statVehiclesCount" text="0" styleClass="stats-card-value"/>
+                                                </children>
+                                            </VBox>
+                                            <VBox styleClass="stats-card" HBox.hgrow="ALWAYS" prefWidth="200.0">
+                                                <children>
+                                                    <Label fx:id="statCard3Title" text="TOTAL TICKETS" styleClass="stats-card-title"/>
+                                                    <Label fx:id="statTicketsCount" text="0" styleClass="stats-card-value"/>
+                                                </children>
+                                            </VBox>
+                                            <VBox styleClass="stats-card" HBox.hgrow="ALWAYS" prefWidth="200.0">
+                                                <children>
+                                                    <Label fx:id="statCard4Title" text="TOTAL UNPAID FINES" styleClass="stats-card-title"/>
+                                                    <Label fx:id="statFinesUnpaid" text="\$0.00" styleClass="stats-card-value" style="-fx-text-fill: #e53e3e;"/>
+                                                </children>
+                                            </VBox>
+                                        </children>
+                                    </HBox>
+
+                                    <!-- Tables Row: Recent Violations + Top Offenders -->
+                                    <HBox spacing="20.0" VBox.vgrow="ALWAYS">
+                                        <children>
+                                            <VBox spacing="10.0" HBox.hgrow="ALWAYS" styleClass="form-container">
+                                                <children>
+                                                    <Label fx:id="recentViolationsTitle" text="Recent Violations Log" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                                                    <TableView fx:id="recentViolationsTable" VBox.vgrow="ALWAYS">
+                                                        <columns>
+                                                            <TableColumn fx:id="colId"     prefWidth="80.0"  text="Ticket ID"/>
+                                                            <TableColumn fx:id="colDriver" prefWidth="150.0" text="Driver"/>
+                                                            <TableColumn fx:id="colPlate"  prefWidth="100.0" text="Plate Number"/>
+                                                            <TableColumn fx:id="colCode"   prefWidth="100.0" text="Violation Code"/>
+                                                            <TableColumn fx:id="colFine"   prefWidth="90.0"  text="Fine Levied"/>
+                                                            <TableColumn fx:id="colDate"   prefWidth="120.0" text="Date"/>
+                                                            <TableColumn fx:id="colStatus" prefWidth="100.0" text="Status"/>
+                                                        </columns>
+                                                    </TableView>
+                                                    <!-- USER: Pay Now button row -->
+                                                    <HBox fx:id="userActionsRow" spacing="10" alignment="CENTER_RIGHT" visible="false" managed="false" style="-fx-padding: 10 0 0 0;">
+                                                        <children>
+                                                            <Button fx:id="btnPayFine" text="💳  Pay Selected Fine" onAction="#handlePaySelectedFine" styleClass="btn-primary"/>
+                                                        </children>
+                                                    </HBox>
+                                                </children>
+                                            </VBox>
+
+                                            <!-- Top Offenders (Admin only) -->
+                                            <VBox fx:id="topOffendersContainer" spacing="10.0" prefWidth="320.0" minWidth="300.0" styleClass="form-container">
+                                                <children>
+                                                    <Label text="Top Offenders (Worst 5)" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #c53030;"/>
+                                                    <TableView fx:id="topOffendersTable" VBox.vgrow="ALWAYS">
+                                                        <columns>
+                                                            <TableColumn fx:id="colOffenderDriver"  prefWidth="110.0" text="Driver"/>
+                                                            <TableColumn fx:id="colOffenderLicense" prefWidth="90.0"  text="License No"/>
+                                                            <TableColumn fx:id="colOffenderTickets" prefWidth="50.0"  text="Tickets"/>
+                                                            <TableColumn fx:id="colOffenderFines"   prefWidth="60.0"  text="Fines"/>
+                                                        </columns>
+                                                    </TableView>
+                                                </children>
+                                            </VBox>
+                                        </children>
+                                    </HBox>
+                                </children>
+                            </VBox>
+
+                            <!-- ════════════════════════════════════════════════════ -->
+                            <!--  VIEW 2: MY VEHICLES (User only)                    -->
+                            <!-- ════════════════════════════════════════════════════ -->
+                            <VBox fx:id="myVehiclesPane" spacing="20.0" visible="false" managed="false">
+                                <children>
+                                    <!-- Info Banner -->
+                                    <HBox spacing="15" alignment="CENTER_LEFT"
+                                          style="-fx-background-color: #ebf8ff; -fx-background-radius: 8; -fx-padding: 14 18; -fx-border-color: #bee3f8; -fx-border-radius: 8; -fx-border-width: 1;">
+                                        <children>
+                                            <Label text="🚗" style="-fx-font-size: 22px;"/>
+                                            <VBox spacing="2">
+                                                <children>
+                                                    <Label text="Registered Vehicles" style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #2b6cb0;"/>
+                                                    <Label text="All vehicles registered under your driver profile." style="-fx-font-size: 12px; -fx-text-fill: #4a5568;"/>
+                                                </children>
+                                            </VBox>
+                                        </children>
+                                    </HBox>
+
+                                    <!-- Vehicles Table -->
+                                    <VBox spacing="12" styleClass="form-container">
+                                        <children>
+                                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                                <children>
+                                                    <Label text="My Registered Vehicles" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                                                    <Label fx:id="myVehiclesCountBadge" text="0 vehicles"
+                                                           style="-fx-background-color: #3182ce; -fx-text-fill: white; -fx-font-size: 11px; -fx-padding: 2 8; -fx-background-radius: 10; -fx-font-weight: bold;"/>
+                                                </children>
+                                            </HBox>
+                                            <TableView fx:id="myVehiclesTable" prefHeight="300.0">
+                                                <columns>
+                                                    <TableColumn fx:id="colVehId"     prefWidth="60.0"  text="ID"/>
+                                                    <TableColumn fx:id="colVehPlate"  prefWidth="130.0" text="Plate Number"/>
+                                                    <TableColumn fx:id="colVehModel"  prefWidth="180.0" text="Model"/>
+                                                    <TableColumn fx:id="colVehColor"  prefWidth="100.0" text="Color"/>
+                                                    <TableColumn fx:id="colVehType"   prefWidth="100.0" text="Type"/>
+                                                    <TableColumn fx:id="colVehTickets" prefWidth="100.0" text="Violations"/>
+                                                </columns>
+                                            </TableView>
+                                            <HBox alignment="CENTER_RIGHT">
+                                                <children>
+                                                    <Button text="🔄  Refresh" onAction="#handleRefreshMyVehicles" styleClass="btn-secondary"/>
+                                                </children>
+                                            </HBox>
+                                        </children>
+                                    </VBox>
+
+                                    <!-- Per-Vehicle Violations -->
+                                    <VBox fx:id="vehicleViolationsContainer" spacing="12" styleClass="form-container" visible="false" managed="false">
+                                        <children>
+                                            <Label fx:id="vehicleViolationsTitle" text="Violations for Selected Vehicle" style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #c53030;"/>
+                                            <TableView fx:id="vehicleViolationsTable" prefHeight="200.0">
+                                                <columns>
+                                                    <TableColumn fx:id="colVVTicketId"  prefWidth="80.0"  text="Ticket ID"/>
+                                                    <TableColumn fx:id="colVVCode"      prefWidth="120.0" text="Violation Code"/>
+                                                    <TableColumn fx:id="colVVFine"      prefWidth="100.0" text="Fine ($)"/>
+                                                    <TableColumn fx:id="colVVDate"      prefWidth="140.0" text="Date"/>
+                                                    <TableColumn fx:id="colVVStatus"    prefWidth="100.0" text="Status"/>
+                                                </columns>
+                                            </TableView>
+                                        </children>
+                                    </VBox>
+                                </children>
+                            </VBox>
+
+                            <!-- ════════════════════════════════════════════════════ -->
+                            <!--  VIEW 3: MY CITATIONS (User only)                   -->
+                            <!-- ════════════════════════════════════════════════════ -->
+                            <VBox fx:id="myCitationsPane" spacing="20.0" visible="false" managed="false">
+                                <children>
+                                    <!-- Summary Cards for citations -->
+                                    <HBox spacing="15" alignment="CENTER">
+                                        <children>
+                                            <VBox styleClass="stats-card" HBox.hgrow="ALWAYS" prefWidth="170.0"
+                                                  style="-fx-background-color: white; -fx-border-color: #bee3f8; -fx-border-width: 0 0 3 0; -fx-border-radius: 0;">
+                                                <children>
+                                                    <Label text="TOTAL CITATIONS" styleClass="stats-card-title"/>
+                                                    <Label fx:id="citTotalCount" text="0" styleClass="stats-card-value"/>
+                                                </children>
+                                            </VBox>
+                                            <VBox styleClass="stats-card" HBox.hgrow="ALWAYS" prefWidth="170.0"
+                                                  style="-fx-background-color: white; -fx-border-color: #fc8181; -fx-border-width: 0 0 3 0;">
+                                                <children>
+                                                    <Label text="UNPAID" styleClass="stats-card-title"/>
+                                                    <Label fx:id="citUnpaidCount" text="0" styleClass="stats-card-value" style="-fx-text-fill: #e53e3e;"/>
+                                                </children>
+                                            </VBox>
+                                            <VBox styleClass="stats-card" HBox.hgrow="ALWAYS" prefWidth="170.0"
+                                                  style="-fx-background-color: white; -fx-border-color: #f6ad55; -fx-border-width: 0 0 3 0;">
+                                                <children>
+                                                    <Label text="PENDING REVIEW" styleClass="stats-card-title"/>
+                                                    <Label fx:id="citPendingCount" text="0" styleClass="stats-card-value" style="-fx-text-fill: #dd6b20;"/>
+                                                </children>
+                                            </VBox>
+                                            <VBox styleClass="stats-card" HBox.hgrow="ALWAYS" prefWidth="170.0"
+                                                  style="-fx-background-color: white; -fx-border-color: #68d391; -fx-border-width: 0 0 3 0;">
+                                                <children>
+                                                    <Label text="PAID" styleClass="stats-card-title"/>
+                                                    <Label fx:id="citPaidCount" text="0" styleClass="stats-card-value" style="-fx-text-fill: #38a169;"/>
+                                                </children>
+                                            </VBox>
+                                            <VBox styleClass="stats-card" HBox.hgrow="ALWAYS" prefWidth="170.0"
+                                                  style="-fx-background-color: white; -fx-border-color: #e53e3e; -fx-border-width: 0 0 3 0;">
+                                                <children>
+                                                    <Label text="TOTAL OWED ($)" styleClass="stats-card-title"/>
+                                                    <Label fx:id="citTotalOwed" text="\$0.00" styleClass="stats-card-value" style="-fx-text-fill: #e53e3e;"/>
+                                                </children>
+                                            </VBox>
+                                        </children>
+                                    </HBox>
+
+                                    <!-- All Citations Table -->
+                                    <VBox spacing="12" styleClass="form-container" VBox.vgrow="ALWAYS">
+                                        <children>
+                                            <HBox alignment="CENTER_LEFT" spacing="15">
+                                                <children>
+                                                    <Label text="📋 All My Traffic Citations" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                                                    <HBox HBox.hgrow="ALWAYS"/>
+                                                    <Label text="Filter:" style="-fx-font-size: 12px; -fx-text-fill: #718096;"/>
+                                                    <Button fx:id="citFilterAll"      text="All"      onAction="#handleCitFilterAll"     style="-fx-background-color: #3182ce; -fx-text-fill: white; -fx-font-size: 11px; -fx-padding: 4 10; -fx-background-radius: 12; -fx-cursor: hand;"/>
+                                                    <Button fx:id="citFilterUnpaid"   text="Unpaid"   onAction="#handleCitFilterUnpaid"  style="-fx-background-color: #fc8181; -fx-text-fill: white; -fx-font-size: 11px; -fx-padding: 4 10; -fx-background-radius: 12; -fx-cursor: hand;"/>
+                                                    <Button fx:id="citFilterPending"  text="Pending"  onAction="#handleCitFilterPending" style="-fx-background-color: #f6ad55; -fx-text-fill: white; -fx-font-size: 11px; -fx-padding: 4 10; -fx-background-radius: 12; -fx-cursor: hand;"/>
+                                                    <Button fx:id="citFilterPaid"     text="Paid"     onAction="#handleCitFilterPaid"    style="-fx-background-color: #68d391; -fx-text-fill: #22543d; -fx-font-size: 11px; -fx-padding: 4 10; -fx-background-radius: 12; -fx-cursor: hand;"/>
+                                                </children>
+                                            </HBox>
+                                            <TableView fx:id="myCitationsTable" VBox.vgrow="ALWAYS" prefHeight="350.0">
+                                                <columns>
+                                                    <TableColumn fx:id="colCitId"      prefWidth="80.0"  text="Ticket ID"/>
+                                                    <TableColumn fx:id="colCitPlate"   prefWidth="120.0" text="Plate No"/>
+                                                    <TableColumn fx:id="colCitCode"    prefWidth="130.0" text="Violation Code"/>
+                                                    <TableColumn fx:id="colCitDesc"    prefWidth="200.0" text="Description"/>
+                                                    <TableColumn fx:id="colCitFine"    prefWidth="90.0"  text="Fine ($)"/>
+                                                    <TableColumn fx:id="colCitDate"    prefWidth="130.0" text="Date Issued"/>
+                                                    <TableColumn fx:id="colCitStatus"  prefWidth="100.0" text="Status"/>
+                                                </columns>
+                                            </TableView>
+                                            <!-- Action Buttons -->
+                                            <HBox spacing="10" alignment="CENTER_RIGHT" style="-fx-padding: 4 0 0 0;">
+                                                <children>
+                                                    <Button text="💳  Pay Selected Fine" onAction="#handlePayCitationFine"
+                                                            style="-fx-background-color: #3182ce; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 9 18; -fx-background-radius: 4px; -fx-cursor: hand;"/>
+                                                    <Button text="🔄  Refresh" onAction="#handleRefreshMyCitations" styleClass="btn-secondary"/>
+                                                </children>
+                                            </HBox>
+                                        </children>
+                                    </VBox>
+                                </children>
+                            </VBox>
+
+                            <!-- ════════════════════════════════════════════════════ -->
+                            <!--  VIEW 4: MY PROFILE (User only)                     -->
+                            <!-- ════════════════════════════════════════════════════ -->
+                            <VBox fx:id="myProfilePane" spacing="20.0" visible="false" managed="false">
+                                <children>
+                                    <!-- Profile Header Card -->
+                                    <HBox spacing="20" alignment="CENTER_LEFT" styleClass="form-container">
+                                        <children>
+                                            <!-- Avatar Circle -->
+                                            <Label fx:id="profileAvatarLabel" text="?"
+                                                   style="-fx-background-color: #3182ce; -fx-text-fill: white; -fx-font-size: 32px; -fx-font-weight: bold; -fx-min-width: 70; -fx-min-height: 70; -fx-max-width: 70; -fx-max-height: 70; -fx-background-radius: 35; -fx-alignment: center;"/>
+                                            <VBox spacing="4" HBox.hgrow="ALWAYS">
+                                                <children>
+                                                    <Label fx:id="profileNameLabel" text="Driver Name" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                                                    <Label fx:id="profileLicenseLabel" text="License: —" style="-fx-font-size: 13px; -fx-text-fill: #718096;"/>
+                                                    <Label fx:id="profileStatusBadge" text="ACTIVE"
+                                                           style="-fx-background-color: #c6f6d5; -fx-text-fill: #22543d; -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 3 12; -fx-background-radius: 12;"/>
+                                                </children>
+                                            </VBox>
+                                        </children>
+                                    </HBox>
+
+                                    <HBox spacing="20">
+                                        <children>
+                                            <!-- Driver Info Card -->
+                                            <VBox spacing="14" styleClass="form-container" HBox.hgrow="ALWAYS">
+                                                <children>
+                                                    <Label text="👤 Driver Information" style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                                                    <Separator/>
+
+                                                    <HBox spacing="10" alignment="CENTER_LEFT">
+                                                        <children>
+                                                            <Label text="Full Name:" style="-fx-font-size: 12px; -fx-text-fill: #718096; -fx-min-width: 120;"/>
+                                                            <Label fx:id="profileFullName" text="—" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #2d3748;"/>
+                                                        </children>
+                                                    </HBox>
+                                                    <HBox spacing="10" alignment="CENTER_LEFT">
+                                                        <children>
+                                                            <Label text="License Number:" style="-fx-font-size: 12px; -fx-text-fill: #718096; -fx-min-width: 120;"/>
+                                                            <Label fx:id="profileLicenseNo" text="—" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #2d3748;"/>
+                                                        </children>
+                                                    </HBox>
+                                                    <HBox spacing="10" alignment="CENTER_LEFT">
+                                                        <children>
+                                                            <Label text="Email Address:" style="-fx-font-size: 12px; -fx-text-fill: #718096; -fx-min-width: 120;"/>
+                                                            <Label fx:id="profileEmail" text="—" style="-fx-font-size: 13px; -fx-text-fill: #2d3748;"/>
+                                                        </children>
+                                                    </HBox>
+                                                    <HBox spacing="10" alignment="CENTER_LEFT">
+                                                        <children>
+                                                            <Label text="Phone Number:" style="-fx-font-size: 12px; -fx-text-fill: #718096; -fx-min-width: 120;"/>
+                                                            <Label fx:id="profilePhone" text="—" style="-fx-font-size: 13px; -fx-text-fill: #2d3748;"/>
+                                                        </children>
+                                                    </HBox>
+                                                    <HBox spacing="10" alignment="CENTER_LEFT">
+                                                        <children>
+                                                            <Label text="Address:" style="-fx-font-size: 12px; -fx-text-fill: #718096; -fx-min-width: 120;"/>
+                                                            <Label fx:id="profileAddress" text="—" style="-fx-font-size: 13px; -fx-text-fill: #2d3748;" wrapText="true"/>
+                                                        </children>
+                                                    </HBox>
+                                                </children>
+                                            </VBox>
+
+                                            <!-- Fine Summary Card -->
+                                            <VBox spacing="14" prefWidth="290" styleClass="form-container">
+                                                <children>
+                                                    <Label text="💰 Fine Summary" style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                                                    <Separator/>
+
+                                                    <VBox spacing="10">
+                                                        <children>
+                                                            <HBox alignment="CENTER_LEFT" spacing="10"
+                                                                  style="-fx-background-color: #fff5f5; -fx-padding: 10 12; -fx-background-radius: 6;">
+                                                                <children>
+                                                                    <Label text="💸 Total Fines Owed:" style="-fx-font-size: 12px; -fx-text-fill: #742a2a;"/>
+                                                                    <HBox HBox.hgrow="ALWAYS"/>
+                                                                    <Label fx:id="profileTotalOwed" text="\$0.00" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #e53e3e;"/>
+                                                                </children>
+                                                            </HBox>
+                                                            <HBox alignment="CENTER_LEFT" spacing="10"
+                                                                  style="-fx-background-color: #f0fff4; -fx-padding: 10 12; -fx-background-radius: 6;">
+                                                                <children>
+                                                                    <Label text="✅ Total Paid:" style="-fx-font-size: 12px; -fx-text-fill: #22543d;"/>
+                                                                    <HBox HBox.hgrow="ALWAYS"/>
+                                                                    <Label fx:id="profileTotalPaid" text="\$0.00" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #38a169;"/>
+                                                                </children>
+                                                            </HBox>
+                                                            <HBox alignment="CENTER_LEFT" spacing="10"
+                                                                  style="-fx-background-color: #fffaf0; -fx-padding: 10 12; -fx-background-radius: 6;">
+                                                                <children>
+                                                                    <Label text="⏳ Pending Approval:" style="-fx-font-size: 12px; -fx-text-fill: #744210;"/>
+                                                                    <HBox HBox.hgrow="ALWAYS"/>
+                                                                    <Label fx:id="profileTotalPending" text="\$0.00" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #dd6b20;"/>
+                                                                </children>
+                                                            </HBox>
+                                                            <HBox alignment="CENTER_LEFT" spacing="10"
+                                                                  style="-fx-background-color: #ebf8ff; -fx-padding: 10 12; -fx-background-radius: 6;">
+                                                                <children>
+                                                                    <Label text="🎫 Total Tickets:" style="-fx-font-size: 12px; -fx-text-fill: #2b6cb0;"/>
+                                                                    <HBox HBox.hgrow="ALWAYS"/>
+                                                                    <Label fx:id="profileTotalTickets" text="0" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #3182ce;"/>
+                                                                </children>
+                                                            </HBox>
+                                                        </children>
+                                                    </VBox>
+
+                                                    <Button text="📋  View My Citations" onAction="#showMyCitationsView"
+                                                            style="-fx-background-color: #3182ce; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 9 16; -fx-background-radius: 4px; -fx-cursor: hand; -fx-max-width: Infinity;"/>
+                                                </children>
+                                            </VBox>
+                                        </children>
+                                    </HBox>
+
+                                    <!-- Account Info Card -->
+                                    <VBox spacing="14" styleClass="form-container">
+                                        <children>
+                                            <Label text="🔐 Account Information" style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                                            <Separator/>
+                                            <HBox spacing="40" alignment="CENTER_LEFT">
+                                                <children>
+                                                    <HBox spacing="10" alignment="CENTER_LEFT">
+                                                        <children>
+                                                            <Label text="Username:" style="-fx-font-size: 12px; -fx-text-fill: #718096;"/>
+                                                            <Label fx:id="profileUsername" text="—" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #2d3748;"/>
+                                                        </children>
+                                                    </HBox>
+                                                    <HBox spacing="10" alignment="CENTER_LEFT">
+                                                        <children>
+                                                            <Label text="Account Role:" style="-fx-font-size: 12px; -fx-text-fill: #718096;"/>
+                                                            <Label fx:id="profileRole" text="USER" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #38a169;"/>
+                                                        </children>
+                                                    </HBox>
+                                                </children>
+                                            </HBox>
+                                        </children>
+                                    </VBox>
+                                </children>
+                            </VBox>
+
+                        </children>
+                    </StackPane>
+                </ScrollPane>
             </children>
         </VBox>
     </center>

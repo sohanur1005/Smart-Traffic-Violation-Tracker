@@ -78,9 +78,18 @@ public class DBConnection {
                 "username VARCHAR(50) UNIQUE NOT NULL, " +
                 "password VARCHAR(255) NOT NULL, " +
                 "role VARCHAR(20) NOT NULL, " +
-                "full_name VARCHAR(100) NOT NULL" +
+                "full_name VARCHAR(100) NOT NULL, " +
+                "driver_id INT DEFAULT NULL" +
                 ")"
             );
+            // Add driver_id column to existing users tables (safe migration)
+            try {
+                stmt.executeUpdate(
+                    "ALTER TABLE users ADD COLUMN driver_id INT DEFAULT NULL"
+                );
+            } catch (SQLException ignore) {
+                // Column already exists — ignore
+            }
             
             // 2. Drivers table
             stmt.executeUpdate(
@@ -93,6 +102,15 @@ public class DBConnection {
                 "address TEXT" +
                 ")"
             );
+            
+            // Add foreign key constraint to users.driver_id pointing to drivers.id
+            try {
+                stmt.executeUpdate(
+                    "ALTER TABLE users ADD CONSTRAINT fk_user_driver FOREIGN KEY (driver_id) REFERENCES drivers(id) ON DELETE SET NULL"
+                );
+            } catch (SQLException ignore) {
+                // Constraint already exists - ignore
+            }
             
             // 3. Vehicles table
             stmt.executeUpdate(
@@ -129,11 +147,55 @@ public class DBConnection {
                 "violation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
                 "status VARCHAR(20) DEFAULT 'UNPAID', " +
                 "notes TEXT, " +
+                "fine DECIMAL(10, 2) DEFAULT 0.00, " +
+                "date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+                "payment_status VARCHAR(20) DEFAULT 'UNPAID', " +
                 "FOREIGN KEY (driver_id) REFERENCES drivers(id) ON DELETE CASCADE, " +
                 "FOREIGN KEY (vehicle_id) REFERENCES vehicles(id) ON DELETE CASCADE, " +
                 "FOREIGN KEY (violation_id) REFERENCES violations(id), " +
                 "FOREIGN KEY (officer_id) REFERENCES users(id)" +
                 ")"
+            );
+            // Safe migrations to add columns to existing records table
+            try {
+                stmt.executeUpdate("ALTER TABLE records ADD COLUMN fine DECIMAL(10, 2) DEFAULT 0.00");
+            } catch (SQLException ignore) {}
+            try {
+                stmt.executeUpdate("ALTER TABLE records ADD COLUMN date TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
+            } catch (SQLException ignore) {}
+            try {
+                stmt.executeUpdate("ALTER TABLE records ADD COLUMN payment_status VARCHAR(20) DEFAULT 'UNPAID'");
+            } catch (SQLException ignore) {}
+            
+            // 6. Notifications table
+            stmt.executeUpdate(
+                "CREATE TABLE IF NOT EXISTS notifications (" +
+                "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                "driver_id INT NOT NULL, " +
+                "record_id INT NOT NULL, " +
+                "message VARCHAR(255) NOT NULL, " +
+                "is_read BOOLEAN DEFAULT FALSE, " +
+                "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+                "FOREIGN KEY (driver_id) REFERENCES drivers(id) ON DELETE CASCADE, " +
+                "FOREIGN KEY (record_id) REFERENCES records(id) ON DELETE CASCADE" +
+                ")"
+            );
+
+            // 7. Data migration: align legacy status values to current spec
+            //    PENDING_APPROVAL  → PENDING
+            //    PAYMENT_REJECTED  → REJECTED
+            stmt.executeUpdate(
+                "UPDATE records SET status = 'PENDING' WHERE status = 'PENDING_APPROVAL'"
+            );
+            stmt.executeUpdate(
+                "UPDATE records SET status = 'REJECTED' WHERE status = 'PAYMENT_REJECTED'"
+            );
+            // 8. Auto-link USER accounts to drivers by full_name match (best-effort)
+            stmt.executeUpdate(
+                "UPDATE users u " +
+                "JOIN drivers d ON LOWER(TRIM(d.name)) = LOWER(TRIM(u.full_name)) " +
+                "SET u.driver_id = d.id " +
+                "WHERE u.role = 'USER' AND u.driver_id IS NULL"
             );
             
         } catch (SQLException e) {

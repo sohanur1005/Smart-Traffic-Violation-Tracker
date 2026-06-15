@@ -10,7 +10,15 @@ import javafx.scene.control.TextField;
 import service.AuthService;
 import util.SceneManager;
 
+import javafx.collections.FXCollections;
+import javafx.util.StringConverter;
+import model.Driver;
+import service.DriverService;
+
 public class RegisterController {
+    @FXML
+    private TextField fullNameField;
+
     @FXML
     private TextField usernameField;
 
@@ -21,32 +29,75 @@ public class RegisterController {
     private ComboBox<String> roleComboBox;
 
     @FXML
+    private Label licenseLabel;
+
+    @FXML
+    private ComboBox<Driver> driverComboBox;
+
+    @FXML
     private Label messageLabel;
 
     private final AuthService authService = new AuthService();
+    private final DriverService driverService = new DriverService();
+
+    @FXML
+    public void initialize() {
+        // Setup converter for driverComboBox
+        driverComboBox.setConverter(new StringConverter<Driver>() {
+            @Override
+            public String toString(Driver d) {
+                return d == null ? "" : d.getName() + " (" + d.getLicenseNumber() + ")";
+            }
+            @Override
+            public Driver fromString(String string) { return null; }
+        });
+
+        // Load driver combo items
+        driverComboBox.setItems(FXCollections.observableArrayList(driverService.getAllDrivers()));
+
+        roleComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
+            boolean isUser = "USER".equalsIgnoreCase(newVal);
+            if (licenseLabel != null) {
+                licenseLabel.setVisible(isUser);
+                licenseLabel.setManaged(isUser);
+            }
+            if (driverComboBox != null) {
+                driverComboBox.setVisible(isUser);
+                driverComboBox.setManaged(isUser);
+            }
+        });
+        roleComboBox.setValue("USER");
+    }
 
     @FXML
     public void handleRegister(ActionEvent event) {
+        String fullName = fullNameField.getText().trim();
         String username = usernameField.getText().trim();
         String password = passwordField.getText().trim();
         String role = roleComboBox.getValue();
+        Driver selectedDriver = (driverComboBox != null && role != null && "USER".equalsIgnoreCase(role)) ? driverComboBox.getValue() : null;
 
-        if (username.isEmpty() || password.isEmpty() || role == null || role.isEmpty()) {
+        if (fullName.isEmpty() || username.isEmpty() || password.isEmpty() || role == null || role.isEmpty() || ("USER".equalsIgnoreCase(role) && selectedDriver == null)) {
             messageLabel.setText("Please fill in all fields.");
             messageLabel.setStyle("-fx-text-fill: #e53e3e; -fx-font-size: 12px;");
             messageLabel.setVisible(true);
             return;
         }
 
-        if (!"user".equalsIgnoreCase(role) && !"admin".equalsIgnoreCase(role)) {
-            messageLabel.setText("Invalid role selection. Only 'user' and 'admin' are allowed.");
+        if (!"OFFICER".equalsIgnoreCase(role) && !"ADMIN".equalsIgnoreCase(role) && !"USER".equalsIgnoreCase(role)) {
+            messageLabel.setText("Invalid role selection. Only 'USER', 'OFFICER', and 'ADMIN' are allowed.");
             messageLabel.setStyle("-fx-text-fill: #e53e3e; -fx-font-size: 12px;");
             messageLabel.setVisible(true);
             return;
         }
 
-        // We use username as full_name to satisfy the database non-null constraint
-        boolean registered = authService.register(username, password, role, username);
+        boolean registered;
+        if ("USER".equalsIgnoreCase(role) && selectedDriver != null) {
+            registered = authService.register(username, password, role, fullName, selectedDriver.getId());
+        } else {
+            registered = authService.register(username, password, role, fullName);
+        }
+        
         if (registered) {
             messageLabel.setText("Registration successful! Redirecting to login...");
             messageLabel.setStyle("-fx-text-fill: #38a169; -fx-font-size: 12px;");

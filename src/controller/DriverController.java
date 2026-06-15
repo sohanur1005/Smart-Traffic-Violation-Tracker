@@ -1,12 +1,17 @@
 package controller;
 
+import dao.UserDAO;
 import model.Driver;
+import model.User;
 import service.DriverService;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -15,8 +20,17 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import util.DBConnection;
 
 public class DriverController {
     @FXML
@@ -186,6 +200,53 @@ public class DriverController {
         if (event != null) {
             statusLabel.setVisible(false);
         }
+    }
+
+    @FXML
+    public void handleLinkUserAccount(ActionEvent event) {
+        if (selectedDriver == null) {
+            showStatus("Please select a driver from the table first.", true);
+            return;
+        }
+
+        // Fetch all USER-role accounts from DB
+        Map<String, Integer> userOptions = new LinkedHashMap<>();
+        String sql = "SELECT id, username, full_name FROM users WHERE role = 'USER' ORDER BY full_name";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                String label = rs.getString("full_name") + " (@" + rs.getString("username") + ")";
+                userOptions.put(label, rs.getInt("id"));
+            }
+        } catch (SQLException e) {
+            showStatus("Error loading user accounts: " + e.getMessage(), true);
+            return;
+        }
+
+        if (userOptions.isEmpty()) {
+            showStatus("No USER-role accounts found. Register users via the Register screen.", true);
+            return;
+        }
+
+        List<String> choices = new ArrayList<>(userOptions.keySet());
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(choices.get(0), choices);
+        dialog.setTitle("Link User Account");
+        dialog.setHeaderText("Link driver: " + selectedDriver.getName()
+                + " (" + selectedDriver.getLicenseNumber() + ")");
+        dialog.setContentText("Select the user account to link:");
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(chosen -> {
+            int userId = userOptions.get(chosen);
+            UserDAO userDAO = new UserDAO();
+            boolean success = userDAO.linkDriverToUser(userId, selectedDriver.getId());
+            if (success) {
+                showStatus("✅ Account '" + chosen + "' linked to driver '" + selectedDriver.getName() + "'.", false);
+            } else {
+                showStatus("Failed to link account. Please try again.", true);
+            }
+        });
     }
 
     private void showStatus(String msg, boolean isError) {

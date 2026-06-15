@@ -17,11 +17,13 @@ public class SceneManager {
         try {
             Parent root = FXMLLoader.load(SceneManager.class.getResource(fxmlPath));
             Scene scene = new Scene(root);
-            // Temporarily allow resizing so the stage can adapt to the new scene size
             stage.setResizable(true);
             stage.setScene(scene);
             stage.sizeToScene();
-            stage.setResizable(false);
+            // Maximize for larger views like the dashboard
+            if (root.prefWidth(-1) > 800) {
+                stage.setMaximized(true);
+            }
             stage.centerOnScreen();
         } catch (Exception e) {
             System.err.println("Failed to load scene: " + fxmlPath);
